@@ -1,4 +1,4 @@
-var gulp           = require('gulp'),
+let gulp           = require('gulp'),
 		gutil          = require('gulp-util' ),
 		scss           = require('gulp-sass'),
 		browserSync    = require('browser-sync'),
@@ -10,20 +10,10 @@ var gulp           = require('gulp'),
 		autoprefixer   = require('gulp-autoprefixer'),
 		ftp            = require('vinyl-ftp'),
 		notify         = require("gulp-notify"),
-		rsync          = require('gulp-rsync');
+		rsync          = require('gulp-rsync'),
+		rigger         = require('gulp-rigger'),
+		babel          = require('gulp-babel');
 
-//Минимизирует файл JS
-gulp.task('common-js', function() {
-	return gulp.src([
-		'app/js/common.js',
-		])
-	.pipe(concat('common.min.js'))
-	.pipe(uglify())
-	.pipe(gulp.dest('app/js'))
-	.pipe(browserSync.reload({stream: true}));
-});
-
-//обновляет страницу в браузере
 gulp.task('browser-sync', function() {
 	browserSync({
 		server: {
@@ -32,6 +22,13 @@ gulp.task('browser-sync', function() {
 		},
 		notify: false,
 	});
+});
+
+gulp.task('html', function () {
+	return gulp.src('app/html/*.html')
+		.pipe(rigger())
+		.pipe(gulp.dest('app/'))
+		.pipe(browserSync.reload({stream: true}));
 });
 
 gulp.task('scss', function() {
@@ -43,9 +40,20 @@ gulp.task('scss', function() {
 	.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('watch', ['scss', 'common-js', 'browser-sync'], function() {
+gulp.task('common-js', function() {
+	return gulp.src(['app/js/custom/**/*.js',])
+	.pipe(babel({
+			presets: ['env']
+	}))
+	// .pipe(uglify()) выключить при отладке
+	.pipe(gulp.dest('app/js/compilied'))
+	.pipe(browserSync.reload({stream: true}));
+});
+
+gulp.task('watch', ['html', 'scss', 'common-js', 'browser-sync'], function() {
+	gulp.watch('app/html/**/*.html', ['html']);
 	gulp.watch('app/scss/**/*.scss', ['scss']);
-	gulp.watch(['libs/**/*.js', 'app/js/common.js'], ['common-js']);
+	gulp.watch(['js/**/*.js',], ['common-js']);
 	gulp.watch('app/*.html', browserSync.reload);
 });
 

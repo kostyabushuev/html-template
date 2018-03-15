@@ -7,3 +7,4 @@
 /**/*.DS_Store
 /app/js/custom
 /maket
+/package-lock.json
