@@ -43,10 +43,10 @@ gulp.task('scss', function() {
 gulp.task('common-js', function() {
 	return gulp.src(['app/js/custom/**/*.js',])
 	.pipe(babel({
-			presets: ['env']
+		presets: ['@babel/preset-env']
 	}))
 	// .pipe(uglify()) выключить при отладке
-	.pipe(gulp.dest('app/js/compilied'))
+	.pipe(gulp.dest('app/js/compiled'))
 	.pipe(browserSync.reload({stream: true}));
 });
 

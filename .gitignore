@@ -5,6 +5,8 @@
 /**/*.psd
 /**/Thumbs.db
 /**/*.DS_Store
-/app/js/compilied
+/app/js/compiled
 /maket
 /package-lock.json
+/app/*.html
+!/app/*.html
