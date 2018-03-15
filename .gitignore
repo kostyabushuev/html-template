@@ -5,5 +5,5 @@
 /**/*.psd
 /**/Thumbs.db
 /**/*.DS_Store
-/app/libs/
-/app/js/common.min.js
+/app/js/custom
+/maket

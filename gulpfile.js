@@ -1,13 +1,11 @@
 var gulp           = require('gulp'),
 		gutil          = require('gulp-util' ),
-		sass           = require('gulp-sass'),
+		scss           = require('gulp-sass'),
 		browserSync    = require('browser-sync'),
 		concat         = require('gulp-concat'),
 		uglify         = require('gulp-uglify'),
 		cleanCSS       = require('gulp-clean-css'),
-		rename         = require('gulp-rename'),
 		del            = require('del'),
-		imagemin       = require('gulp-imagemin'),
 		cache          = require('gulp-cache'),
 		autoprefixer   = require('gulp-autoprefixer'),
 		ftp            = require('vinyl-ftp'),
@@ -33,57 +31,22 @@ gulp.task('browser-sync', function() {
 			directory: true
 		},
 		notify: false,
-		// tunnel: true,
-		// tunnel: "projectmane", //Demonstration page: http://projectmane.localtunnel.me
 	});
 });
 
-gulp.task('sass', function() {
-	return gulp.src('app/sass/**/*.sass')
-	.pipe(sass({outputStyle: 'expand'}).on("error", notify.onError()))
-	.pipe(rename({suffix: '.min', prefix : ''}))
+gulp.task('scss', function() {
+	return gulp.src('app/scss/**/*.scss')
+	.pipe(scss({outputStyle: 'expand'}).on("error", notify.onError()))
 	.pipe(autoprefixer(['last 15 versions']))
 	//.pipe(cleanCSS()) // Опционально, закомментировать при отладке
-	.pipe(gulp.dest('app/css'))
+	.pipe(gulp.dest('app/css/custom'))
 	.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('watch', ['sass', 'common-js', 'browser-sync'], function() {
-	gulp.watch('app/sass/**/*.sass', ['sass']);
+gulp.task('watch', ['scss', 'common-js', 'browser-sync'], function() {
+	gulp.watch('app/scss/**/*.scss', ['scss']);
 	gulp.watch(['libs/**/*.js', 'app/js/common.js'], ['common-js']);
 	gulp.watch('app/*.html', browserSync.reload);
-});
-
-gulp.task('imagemin', function() {
-	return gulp.src('app/img/**/*')
-	.pipe(cache(imagemin()))
-	.pipe(gulp.dest('dist/img')); 
-});
-
-gulp.task('build', ['removedist', 'imagemin', 'sass', 'common-js'], function() {
-
-	var buildFiles = gulp.src([
-		'app/*.html',
-		'app/.htaccess',
-		]).pipe(gulp.dest('dist'));
-
-	//добавляем все css файлы,
-	//которые должны быть в продакшене
-	var buildCss = gulp.src([
-		'app/css/main.min.css'
-		]).pipe(gulp.dest('dist/css'));
-
-	//добавляем все css файлы,
-	//которые должны быть в продакшене
-	var buildJs = gulp.src([
-		'app/js/common.min.js',
-		'app/js/jquery-3.2.1.min.js'	//jquery
-		]).pipe(gulp.dest('dist/js'));
-
-	var buildFonts = gulp.src([
-		'app/fonts/**/*',
-		]).pipe(gulp.dest('dist/fonts'));
-
 });
 
 gulp.task('deploy', function() {
