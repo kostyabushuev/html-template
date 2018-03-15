@@ -1,10 +1,10 @@
 /node_modules/
 /dist/
 /.git/
-/app/css/
+/app/css/custom
 /**/*.psd
 /**/Thumbs.db
 /**/*.DS_Store
-/app/js/custom
+/app/js/compilied
 /maket
 /package-lock.json
