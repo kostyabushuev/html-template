@@ -1,0 +1,56 @@
+//=========АДАПТИВ НА МАКСИМАЛКАХ=========//
+@mixin getCssLock ($property, $minWidth, $maxWidth,
+                   $values_1: false,
+                   $values_2: (false false),
+                   $values_3: (false false),
+                   $values_4: (false false),
+                   $x: 100vw) {
+    
+  $x1: $minWidth;
+  $x2: $maxWidth;
+  
+  $y1_1: nth($values_1, 1);
+  $y2_2: nth($values_1, 2);
+  
+  $y1_3: nth($values_2, 1);
+  $y2_4: nth($values_2, 2);
+  
+  $y1_5: nth($values_3, 1);
+  $y2_6: nth($values_3, 2);
+  
+  $y1_7: nth($values_4, 1);
+  $y2_8: nth($values_4, 2);
+  
+  $stringCulc: '';
+  
+  @function calcCssLock ($y1, $y2) {    
+    /*
+    ** y = mx + b
+    **
+    ** m = font_size_increase / viewport_increase
+    ** m = m = (y2 - y1) / (x2 - x1)
+    **
+    ** b = y1 - m * x1
+    **
+    ** X = 100vw or 100vh
+    */
+    
+    $m: ($y2 - $y1) / ($x2 - $x1);
+    $b: $y1 - $m * $x1;    
+    
+    @return calc(#{$m * $x + ' + ' + $b + 'px'});
+  }
+  
+  #{$property}: if($y1_7, calcCssLock($y1_1, $y2_2)
+                    calcCssLock($y1_3, $y2_4)
+                    calcCssLock($y1_5, $y2_6)
+                    calcCssLock($y1_7, $y2_8),
+                  if($y1_5, calcCssLock($y1_1, $y2_2)
+                            calcCssLock($y1_3, $y2_4)
+                            calcCssLock($y1_5, $y2_6),
+                    if($y1_3, calcCssLock($y1_1, $y2_2) calcCssLock($y1_3, $y2_4),
+                                calcCssLock($y1_1, $y2_2)
+                    )
+                  )
+                )
+}

@@ -2,23 +2,19 @@ let gulp           = require('gulp'),
 		gutil          = require('gulp-util' ),
 		scss           = require('gulp-sass'),
 		browserSync    = require('browser-sync'),
-		concat         = require('gulp-concat'),
-		uglify         = require('gulp-uglify'),
 		cleanCSS       = require('gulp-clean-css'),
-		del            = require('del'),
-		cache          = require('gulp-cache'),
 		autoprefixer   = require('gulp-autoprefixer'),
 		ftp            = require('vinyl-ftp'),
 		notify         = require("gulp-notify"),
 		rsync          = require('gulp-rsync'),
 		rigger         = require('gulp-rigger'),
-		babel          = require('gulp-babel');
+		babel          = require('gulp-babel')
+		plumber        = require('gulp-plumber')
 
 gulp.task('browser-sync', function() {
 	browserSync({
 		server: {
 			baseDir: 'app',
-			directory: true
 		},
 		notify: false,
 	});
@@ -26,7 +22,8 @@ gulp.task('browser-sync', function() {
 
 gulp.task('html', function () {
 	return gulp.src('app/html/*.html')
-		.pipe(rigger())
+		// .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
+		.pipe(rigger().on("error", notify.onError()))
 		.pipe(gulp.dest('app/'))
 		.pipe(browserSync.reload({stream: true}));
 });
@@ -40,20 +37,20 @@ gulp.task('scss', function() {
 	.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('common-js', function() {
+gulp.task('js', function() {
 	return gulp.src(['app/js/custom/**/*.js',])
+	.pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
 	.pipe(babel({
 		presets: ['@babel/preset-env']
 	}))
-	// .pipe(uglify()) выключить при отладке
 	.pipe(gulp.dest('app/js/compiled'))
 	.pipe(browserSync.reload({stream: true}));
 });
 
-gulp.task('watch', ['html', 'scss', 'common-js', 'browser-sync'], function() {
+gulp.task('watch', ['html', 'scss', 'js', 'browser-sync'], function() {
 	gulp.watch('app/html/**/*.html', ['html']);
 	gulp.watch('app/scss/**/*.scss', ['scss']);
-	gulp.watch(['js/**/*.js',], ['common-js']);
+	gulp.watch('app/js/custom/**/*.js', ['js']);
 	gulp.watch('app/*.html', browserSync.reload);
 });
 
@@ -87,8 +84,5 @@ gulp.task('rsync', function() {
 		compress: true
 	}));
 });
-
-gulp.task('removedist', function() { return del.sync('dist'); });
-gulp.task('clearcache', function () { return cache.clearAll(); });
 
 gulp.task('default', ['watch']);

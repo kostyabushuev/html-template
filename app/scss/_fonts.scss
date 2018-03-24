@@ -1,5 +1,5 @@
 //=====MIXINS=====//
-@import "_mixins/font-face"; //mixin for fonts
+@import "_mixins/_font-face"; //mixin for fonts
 
 //=====FONTS=====//
 @include font-face("RobotoBold", "../fonts/RobotoBold/RobotoBold");

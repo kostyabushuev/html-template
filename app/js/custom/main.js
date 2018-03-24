@@ -1,0 +1,9 @@
+const Main = {
+  init () {
+      
+  }
+}
+
+$(function () {
+  
+})
