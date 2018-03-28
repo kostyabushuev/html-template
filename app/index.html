@@ -8,13 +8,13 @@
 			-webkit-box-sizing: border-box;
 			box-sizing: border-box;
 		}
-	
+
 		.demo {
 			display: flex;
 			flex-wrap: wrap;
 			margin: 0 20px 0;
 		}
-		
+
 		.demo__item {
 			position: relative;
 			max-width: 200px;
@@ -24,14 +24,16 @@
 			transition: .2s;
 			margin: 10px;
 			min-width: 300px;
+			max-width: 300px;
 			min-height: 300px;
+			max-height: 300px;
 			height: 100%;
 		}
-		
+
 		.demo__item-img {
 			width: 100%;
 		}
-		
+
 		.demo__item-description {
 			display: block;
 			padding: 5px;
@@ -47,7 +49,7 @@
 			color: #333;
 			transition: .2s;
 		}
-		
+
 		.demo__item-number {
 			position: absolute;
 			top: 0;
@@ -66,24 +68,24 @@
 			border-right: 2px solid #ccc;
 			transition: .2s;
 		}
-		
+
 		.demo__item:hover {
 			border: 2px solid #000;
 		}
-		
+
 		.demo__item:hover .demo__item-description {
 			color: #000;
 		}
-		
+
 		.demo__item:hover .demo__item-number {
 			border-bottom: 2px solid #000;
 			border-right: 2px solid #000;
-		}		
-		
+		}
+
 		.demo__item:hover .demo__item-number--ready {
 			color: green;
 		}
-		
+
 		.status__ready {
 			position: absolute;
 			top: 0;
@@ -93,7 +95,7 @@
 			background-color: green;
 			opacity: .3;
 		}
-		
+
 		.status__not-ready {
 			position: absolute;
 			top: 0;
@@ -103,7 +105,7 @@
 			background-color: red;
 			opacity: .3;
 		}
-		
+
 	</style>
 
 </head>
@@ -111,19 +113,17 @@
 <body>
 
 	<div class="demo">
-		<a class="demo__item" href="1_MAIN-PAGE.html">
-			<img class="demo__item-img" src="" alt="">
+		<a class="demo__item" href="1_MAIN.html">
+			<img class="demo__item-img" src="https://www.sunhome.ru/i/wallpapers/61/pozitivnie-kartinki.orig.jpg" alt="">
 			<span class="demo__item-number">1</span>
 			<span class="demo__item-description">1_MAIN-PAGE.html - Главная страница</span>
-			<span class="status__ready"></span>
 		</a>
-		<a class="demo__item" href="2_MAKING-PAGE.html">
+		<a class="demo__item" href="2_MAKING.html">
 			<img class="demo__item-img" src="" alt="">
 			<span class="demo__item-number">2</span>
 			<span class="demo__item-description">2_INNER-PAGE.html - внутрення страница</span>
-			<span class="status__not-ready"></span>
 		</a>
 	</div>
-	
+
 </body>
 </html>
