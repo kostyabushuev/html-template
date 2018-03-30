@@ -22,8 +22,7 @@ gulp.task('browser-sync', function() {
 
 gulp.task('html', function () {
 	return gulp.src('app/html/*.html')
-		// .pipe(plumber({errorHandler: notify.onError("Error: <%= error.message %>")}))
-		.pipe(rigger().on("error", notify.onError()))
+		.pipe(rigger())
 		.pipe(gulp.dest('app/'))
 		.pipe(browserSync.reload({stream: true}));
 });
