@@ -30,7 +30,7 @@ gulp.task('scss', function () {
   return gulp.src('app/scss/**/*.scss')
   .pipe(scss({outputStyle: 'compressed'}).on('error', notify.onError()))
   .pipe(autoprefixer(['last 15 versions']))
-  .pipe(gulp.dest('app/css/custom'))
+  .pipe(gulp.dest('app/css/compiled'))
   .pipe(browserSync.reload({stream: true}))
 })
 

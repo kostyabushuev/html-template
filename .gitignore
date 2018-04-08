@@ -6,6 +6,7 @@
 /package-lock.json
 
 /app/*.html
+!app/index.html
 !app/html/**/*.html
 
 /maket
