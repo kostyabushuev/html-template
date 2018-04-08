@@ -1,13 +1,15 @@
 /node_modules/
 /dist/
 /.git/
-/app/css/custom
-/**/*.psd
-/**/Thumbs.db
-/**/*.DS_Store
+/app/css/compiled
 /app/js/compiled
 /package-lock.json
+
 /app/*.html
 !app/html/**/*.html
 
+/maket
+/**/*.psd
+/**/Thumbs.db
+/**/*.DS_Store
 *.zip

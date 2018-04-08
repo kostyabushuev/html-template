@@ -2,7 +2,6 @@ let gulp = require('gulp')
 let gutil = require('gulp-util' )
 let scss = require('gulp-sass')
 let browserSync = require('browser-sync')
-let cleanCSS = require('gulp-clean-css')
 let autoprefixer = require('gulp-autoprefixer')
 let ftp = require('vinyl-ftp')
 let notify = require('gulp-notify')
@@ -29,15 +28,14 @@ gulp.task('html', function () {
 
 gulp.task('scss', function () {
   return gulp.src('app/scss/**/*.scss')
-  .pipe(scss({outputStyle: 'expand'}).on('error', notify.onError()))
+  .pipe(scss({outputStyle: 'compressed'}).on('error', notify.onError()))
   .pipe(autoprefixer(['last 15 versions']))
-  // .pipe(cleanCSS()) // Опционально, закомментировать при отладке
   .pipe(gulp.dest('app/css/custom'))
   .pipe(browserSync.reload({stream: true}))
 })
 
 gulp.task('js', function () {
-  return gulp.src(['app/js/custom/**/*.js',])
+  return gulp.src(['app/js/custom/**/*.js'])
   .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
   .pipe(babel({
     presets: ['@babel/preset-env']
