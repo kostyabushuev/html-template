@@ -4,6 +4,6 @@ const Main = {
   }
 }
 
-document.addEventListener(function () {
+document.addEventListener('load', function () {
   Main.init()
 })
