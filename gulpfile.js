@@ -9,6 +9,7 @@ let rsync = require('gulp-rsync')
 let rigger = require('gulp-rigger')
 let babel = require('gulp-babel')
 let plumber = require('gulp-plumber')
+let del = require('del')
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -66,6 +67,32 @@ gulp.task('deploy', function () {
   ]
   return gulp.src(globs, {buffer: false})
   .pipe(conn.dest('/path/to/folder/on/server'))
+})
+
+gulp.task('removedist', function() { return del.sync('dist'); });
+
+gulp.task('build', ['removedist', 'scss', 'js'], function() {
+
+	let buildFiles = gulp.src([
+    'app/*.html',
+    'app/.htaccess',
+    ]).pipe(gulp.dest('dist'))
+
+	let buildCss = gulp.src([
+    'app/css/**/*',
+    ]).pipe(gulp.dest('dist/css'))
+
+	let buildImg = gulp.src([
+    'app/img/**/*',
+    ]).pipe(gulp.dest('dist/img'))
+
+	let buildJs = gulp.src([
+    'app/js/**/*',
+    ]).pipe(gulp.dest('dist/js'))
+
+	let buildFonts = gulp.src([
+    'app/fonts/**/*',
+    ]).pipe(gulp.dest('dist/fonts'))
 })
 
 gulp.task('rsync', function () {
