@@ -10,6 +10,8 @@ let rigger = require('gulp-rigger')
 let babel = require('gulp-babel')
 let plumber = require('gulp-plumber')
 let del = require('del')
+let imagemin = require('gulp-imagemin')
+let cache = require('gulp-cache')
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -52,30 +54,21 @@ gulp.task('watch', ['html', 'scss', 'js', 'browser-sync'], function () {
   gulp.watch('app/*.html', browserSync.reload)
 })
 
-gulp.task('deploy', function () {
-  let conn = ftp.create({
-    host: 'hostname.com',
-    user: 'username',
-    password: 'userpassword',
-    parallel: 0,
-    log: gutil.log
-  })
-
-  let globs = [
-    'dist/**',
-    'dist/.htaccess',
-  ]
-  return gulp.src(globs, {buffer: false})
-  .pipe(conn.dest('/path/to/folder/on/server'))
+gulp.task('imagemin', function () {
+  return gulp.src('app/img/**/*')
+    .pipe(cache(imagemin()))
+    .pipe(gulp.dest('dist/img'))
 })
 
-gulp.task('removedist', function() { return del.sync('dist'); });
+gulp.task('removedist', function () {
+  return del.sync('dist')
+})
 
-gulp.task('build', ['removedist', 'scss', 'js'], function() {
-
+gulp.task('build', ['imagemin', 'html', 'removedist', 'scss', 'js'], function () {
 	let buildFiles = gulp.src([
     'app/*.html',
     'app/.htaccess',
+    'app/*.php',
     ]).pipe(gulp.dest('dist'))
 
 	let buildCss = gulp.src([
@@ -105,4 +98,21 @@ gulp.task('rsync', function () {
     silent: false,
     compress: true
   }))
+})
+
+gulp.task('deploy', function () {
+  let conn = ftp.create({
+    host: 'hostname.com',
+    user: 'username',
+    password: 'userpassword',
+    parallel: 0,
+    log: gutil.log
+  })
+
+  let globs = [
+    'dist/**',
+    'dist/.htaccess',
+  ]
+  return gulp.src(globs, {buffer: false})
+  .pipe(conn.dest('/path/to/folder/on/server'))
 })
