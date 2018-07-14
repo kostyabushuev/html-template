@@ -1,4 +1,6 @@
 {
+  /* More about HTMLHint https://github.com/yaniswang/HTMLHint/wiki/Usage */
+
   /* В наименовании тегов используются строчные буквы */
   "tagname-lowercase": true,
 

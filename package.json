@@ -13,17 +13,18 @@
     "@babel/preset-env": "^7.0.0-beta.41",
     "browser-sync": "^2.18.13",
     "del": "^3.0.0",
+    "eslint": "^5.1.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-babel": "^8.0.0-beta.2",
     "gulp-cache": "^1.0.2",
+    "gulp-htmlhint": "^2.1.1",
     "gulp-imagemin": "^4.1.0",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.0",
     "gulp-rigger": "^0.5.8",
     "gulp-rsync": "0.0.8",
     "gulp-sass": "^3.1.0",
-    "htmlhint": "^0.9.13",
     "vinyl-ftp": "^0.6.0"
   }
 }

@@ -12,6 +12,7 @@ let plumber = require('gulp-plumber')
 let del = require('del')
 let imagemin = require('gulp-imagemin')
 let cache = require('gulp-cache')
+let htmlhint = require('gulp-htmlhint')
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -24,6 +25,8 @@ gulp.task('browser-sync', function () {
 
 gulp.task('html', function () {
   return gulp.src('app/html/*.html')
+    .pipe(htmlhint('.htmlhintrc'))
+    .pipe(htmlhint.reporter())
     .pipe(rigger())
     .pipe(gulp.dest('app/'))
     .pipe(browserSync.reload({stream: true}))
@@ -65,25 +68,25 @@ gulp.task('removedist', function () {
 })
 
 gulp.task('build', ['imagemin', 'html', 'removedist', 'scss', 'js'], function () {
-	let buildFiles = gulp.src([
+  let buildFiles = gulp.src([
     'app/*.html',
     'app/.htaccess',
     'app/*.php',
     ]).pipe(gulp.dest('dist'))
 
-	let buildCss = gulp.src([
+  let buildCss = gulp.src([
     'app/css/**/*',
     ]).pipe(gulp.dest('dist/css'))
 
-	let buildImg = gulp.src([
+  let buildImg = gulp.src([
     'app/img/**/*',
     ]).pipe(gulp.dest('dist/img'))
 
-	let buildJs = gulp.src([
+  let buildJs = gulp.src([
     'app/js/**/*',
     ]).pipe(gulp.dest('dist/js'))
 
-	let buildFonts = gulp.src([
+  let buildFonts = gulp.src([
     'app/fonts/**/*',
     ]).pipe(gulp.dest('dist/fonts'))
 })
