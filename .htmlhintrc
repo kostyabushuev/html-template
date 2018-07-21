@@ -1,5 +1,4 @@
 {
-  /* More about HTMLHint https://github.com/yaniswang/HTMLHint/wiki/Usage */
   "tagname-lowercase": true,
   "attr-lowercase": ["viewBox"],
   "attr-value-double-quotes": true,
