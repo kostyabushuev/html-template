@@ -26,8 +26,12 @@ gulp.task('browser-sync', function () {
 
 gulp.task('html', function () {
   return gulp.src('app/html/*.html')
+    .pipe(plumber(() => {}))
     .pipe(htmlhint('.htmlhintrc'))
-    .pipe(htmlhint.reporter())
+    .pipe(htmlhint.failOnError())
+    .on('error', function (error) {
+      console.log(error.message)
+    })
     .pipe(fileinclude({
       prefix: '@@',
       basepath: '@file'
