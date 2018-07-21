@@ -1,5 +1,5 @@
 {
-  "name": "startTemplate",
+  "name": "html-temlate",
   "version": "1.1.0",
   "description": "Start HTML Template",
   "main": "index.js",
@@ -25,6 +25,8 @@
     "gulp-rigger": "^0.5.8",
     "gulp-rsync": "0.0.8",
     "gulp-sass": "^3.1.0",
+    "gulp-stylelint": "^7.0.0",
+    "stylelint": "^9.3.0",
     "vinyl-ftp": "^0.6.0"
   }
 }

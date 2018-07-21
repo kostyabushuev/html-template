@@ -1,7 +1,7 @@
 @import "_get-value";
 @import "_get-name-of-property";
 
-/* default css-lock, work with VW*/
+/* default css-lock, work with VW */
 @mixin cssLock (
   $property, $min, $max,
   $values_1: false,

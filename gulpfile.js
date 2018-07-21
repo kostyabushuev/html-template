@@ -1,18 +1,19 @@
-let gulp = require('gulp')
-let gutil = require('gulp-util' )
-let scss = require('gulp-sass')
-let browserSync = require('browser-sync')
-let autoprefixer = require('gulp-autoprefixer')
-let ftp = require('vinyl-ftp')
-let notify = require('gulp-notify')
-let rsync = require('gulp-rsync')
-let rigger = require('gulp-rigger')
-let babel = require('gulp-babel')
-let plumber = require('gulp-plumber')
-let del = require('del')
-let imagemin = require('gulp-imagemin')
-let cache = require('gulp-cache')
-let htmlhint = require('gulp-htmlhint')
+const gulp = require('gulp')
+const gutil = require('gulp-util' )
+const scss = require('gulp-sass')
+const browserSync = require('browser-sync')
+const autoprefixer = require('gulp-autoprefixer')
+const ftp = require('vinyl-ftp')
+const notify = require('gulp-notify')
+const rsync = require('gulp-rsync')
+const rigger = require('gulp-rigger')
+const babel = require('gulp-babel')
+const plumber = require('gulp-plumber')
+const del = require('del')
+const imagemin = require('gulp-imagemin')
+const cache = require('gulp-cache')
+const htmlhint = require('gulp-htmlhint')
+const gulpStylelint = require('gulp-stylelint')
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -34,7 +35,17 @@ gulp.task('html', function () {
 
 gulp.task('scss', function () {
   return gulp.src('app/scss/**/*.scss')
-  .pipe(scss({outputStyle: 'compressed'}).on('error', notify.onError()))
+  .pipe(gulpStylelint({
+    failAfterError: false,
+    reporters: [
+      {formatter: 'string', console: true},
+    ],
+  }))
+  .pipe(scss({outputStyle: 'compressed'}))
+  .on('error', notify.onError({
+    title: 'Error compilation scss-file',
+    message: '<%= error.message %>',
+  }))
   .pipe(autoprefixer(['last 15 versions']))
   .pipe(gulp.dest('app/css/compiled'))
   .pipe(browserSync.reload({stream: true}))
@@ -68,24 +79,29 @@ gulp.task('removedist', function () {
 })
 
 gulp.task('build', ['imagemin', 'html', 'removedist', 'scss', 'js'], function () {
+  /* eslint-disable-next-line */
   let buildFiles = gulp.src([
     'app/*.html',
     'app/.htaccess',
     'app/*.php',
     ]).pipe(gulp.dest('dist'))
 
+  /* eslint-disable-next-line */
   let buildCss = gulp.src([
     'app/css/**/*',
     ]).pipe(gulp.dest('dist/css'))
 
+  /* eslint-disable-next-line */
   let buildImg = gulp.src([
     'app/img/**/*',
     ]).pipe(gulp.dest('dist/img'))
 
+  /* eslint-disable-next-line */
   let buildJs = gulp.src([
     'app/js/**/*',
     ]).pipe(gulp.dest('dist/js'))
 
+  /* eslint-disable-next-line */
   let buildFonts = gulp.src([
     'app/fonts/**/*',
     ]).pipe(gulp.dest('dist/fonts'))
