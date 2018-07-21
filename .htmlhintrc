@@ -1,102 +1,26 @@
 {
   /* More about HTMLHint https://github.com/yaniswang/HTMLHint/wiki/Usage */
-
-  /* В наименовании тегов используются строчные буквы */
   "tagname-lowercase": true,
-
-  /*
-   * В наименовании тегов используются строчные буквы
-   * Значения:
-   *  "true": включить правило,
-   *  "false": выключить правило
-   *  "['viewBox']": включить правило и указать игнорируемые имена
-   */
-  "attr-lowercase": false,
-
-  /* Значение аттрибутов записывается в используются двойные кавычки */
+  "attr-lowercase": ["viewBox"],
   "attr-value-double-quotes": true,
-
-  /* Атрибуты не должен быть пустой */
   "attr-value-not-empty": true,
-
-  /* Дублирование аттрибутов */
   "attr-no-duplication": true,
-
-  /* В первой строке документа указывается doctype */
   "doctype-first": false,
-
-  /* Закрытие парных тегов */
   "tag-pair": true,
-
-  /* Закрытие одиночного тега */
   "tag-self-close": false,
-
-  /* Экранирование специальных символов (пример: &gt;) */
   "spec-char-escape": false,
-
-  /* Использываение уникальных id */
   "id-unique": true,
-
-  /* Тег src не должен быть пустым */
   "src-not-empty": true,
-
-  /* Обязательное наличие тега title */
   "title-require": true,
-
-  /* Обязательное наличие аттрибута alt */
   "alt-require": true,
-
-  /* Doctype по стандарту HTML5 */
   "doctype-html5": true,
-
-  /*
-   * Наименование классов и id
-   * Значения:
-   *  "dash" - в качестве разделителя слов разрешается использовать только "-"
-   *  "hulp" - в качестве разделителя разрешается использовать только camelCase
-   *  "underline" - в качестве разделителя слов разрешается использовать только *   "_"
-   *  "false" - отключить правило
-   */
   "id-class-value": "",
-
-  /* Использование тега style на странице */
   "style-disabled": false,
-
-  /* Использование inline-стилей */
   "inline-style-disabled": false,
-
-  /* Использование inline-скриптов */
   "inline-script-disabled": false,
-
-  /*
-   * Использование одновременно tab и space
-   * Значения:
-   *  "space": space mode (используются только пробелы)
-   *  "space4: space mode and require length (используются только
-   *   пробелы с указанием длины)
-   *  "tab": tab mode (используются только пробелы)
-   *  "false": отключить правило
-   */
   "space-tab-mixed-disabled": "space2",
-
-  /* Класс или ID не может использовать разделяющие символы */
   "id-class-ad-disabled": false,
-
-  /*
-   * Ссылки должны быть либо абсолютными, либо относительными
-   * Значения:
-   *  "abs": абсолютные,
-   *  "rel": относительные,
-   *  "false": отключить правило
-   */
   "href-abs-or-rel": false,
-
-  /* Тэг script не может использоваться внутри тега head */
   "head-script-disabled": false,
-
-  /*
-   * Значения аттрибутов не могу использовать небезопасные
-   * символы (пример: \u0009‎)
-   */
   "attr-unsafe-chars": true
 }
