@@ -6,10 +6,10 @@
       "message": "Неправильно написан HEX цвета"
     }],
     "font-family-no-duplicate-names": [true, {
-      "message": "Дублируется название семейства шрифта",
+      "message": "Дублируется название семейства шрифта"
     }],
     "font-family-no-missing-generic-family-keyword": [true, {
-      "message": "Отсутствует общее семейство шрифтов в списке (serif / sans-serif / monospace)",
+      "message": "Отсутствует общее семейство шрифтов в списке (serif / sans-serif / monospace)"
     }],
     "function-calc-no-unspaced-operator": [true, {
       "message": "В функции calc() необходимо использовать пробелы между операторами"
@@ -60,7 +60,7 @@
         "/^if/",
         "/^else/",
         "/^function/",
-        "/^return/",
+        "/^return/"
       ]
     }],
     "comment-no-empty": [true, {
@@ -113,7 +113,7 @@
       "message": "Запрещено использование вендорного префикса"
     }],
     "media-feature-name-no-vendor-prefix": [true, {
-      "message": "Запрещено использовать вендорные префиксы",
+      "message": "Запрещено использовать вендорные префиксы"
     }],
     "at-rule-no-vendor-prefix": [true, {
       "message": "Запрещено использовать для @-правил вендорные префиксы"
@@ -122,16 +122,16 @@
       "message": "Пропущено имя keyframes"
     }],
     "color-hex-case": ["lower", {
-      "message": "HEX цвета должен быть записан строчными буквами",
+      "message": "HEX цвета должен быть записан строчными буквами"
     }],
     "color-hex-length": ["short", {
-      "message": "HEX цвета должен быть записан в короткой форме",
+      "message": "HEX цвета должен быть записан в короткой форме"
     }],
-    "font-family-name-quotes": ["always-where-recommended", {
+    "font-family-name-quotes": ["always-unless-keyword", {
       "message": "Название шрифта должно быть в кавычках"
     }],
     "font-weight-notation": ["numeric", {
-      "message": "Свойство font-weigth можно задавать только числом",
+      "message": "Свойство font-weigth можно задавать только числом"
     }],
     "function-max-empty-lines": [0, {
       "message": "Запрещено использовать пустые строки в функции"
@@ -149,22 +149,14 @@
       "message": "Между функциями необходимо использовать пробел"
     }],
     "number-leading-zero": ["always", {
-      "message": "Ноль перед точкой не указывается"
+      "message": "Перед точкой указывается ноль"
     }],
     "number-no-trailing-zeros": [true, {
       "message": "Лишний (необязательный) нуль в дроби"
     }],
-    "string-quotes": ["double", {
-      "message": "Необходимо использовать двойные кавычки"
+    "string-quotes": ["single", {
+      "message": "Необходимо использовать одинарные кавычки"
     }],
-
-
-
-
-
-
-
-
     "function-comma-space-after": ["always", {
       "message": "После запятой пробел необходим"
     }],
@@ -180,14 +172,14 @@
     "value-keyword-case": ["lower", {
       "message": "Значение свойств необходимо писать строчными буквами"
     }],
-    "value-list-comma-newline-after": ["never-multi-line", {
-      "message": "Значения свойств не должны содержать переносы"
+    "value-list-comma-newline-after": ["always-multi-line", {
+      "message": "Перенос должен быть после запятой при нескольких значениях для одного свойства"
     }],
     "value-list-comma-newline-before": ["never-multi-line", {
       "message": "Значения свойств не должны содержать переносы"
     }],
-    "value-list-comma-space-after": ["always", {
-      "message": "Необходимо использовать пробел после запятой"
+    "value-list-comma-space-after": ["always-single-line", {
+      "message": "Нельзя использовать пробел после запятой при перечислении нескольких свойств"
     }],
     "value-list-comma-space-before": ["never", {
       "message": "Запрещено использовать пробел перед запятой"
@@ -210,7 +202,7 @@
     "declaration-colon-newline-after": ["always-multi-line", {
       "message": "Каждые новое значение для одно и того же свойства необхожимо писать в новой строке"
     }],
-    "declaration-colon-space-after": ["always", {
+    "declaration-colon-space-after": ["always-single-line", {
       "message": "После двоеточия необходимо ставить пробел"
     }],
     "declaration-colon-space-before": ["never", {
@@ -258,7 +250,7 @@
     "selector-attribute-quotes": ["always", {
       "message": "В селекторе атрибута нужно писать кавычки"
     }],
-    "selector-combinator-space-after": ["never", {
+    "selector-combinator-space-after": ["always", {
       "message": "После комбинатора в селекторе нужен пробел"
     }],
     "selector-combinator-space-before": ["always", {
@@ -292,7 +284,8 @@
       "message": "Перед запятой пробела быть не должно"
     }],
     "rule-empty-line-before": ["always", {
-      "message": "Перед селектором необходимо ставить пустую строку",
+      "message": "Перед селектором необходимо ставить пустую строку (за исключением первого вложения и коментария)",
+      "except": ["first-nested"],
       "ignore": ["after-comment"]
     }],
     "media-feature-colon-space-after": ["always", {
@@ -336,16 +329,17 @@
       "ignore": ["stylelint-commands"]
     }],
     "comment-whitespace-inside": ["always", {
-      "message": "Между '/*' должны быть пробелы '*/'",
+      "message": "Между '/*' должны быть пробелы '*/'"
     }],
     "indentation": [2, {
       "message": "Отступ должен быть равен двум пробелам"
     }],
     "no-eol-whitespace": [true, {
-      "message": "В конце строки не должно быть пустых символов"
+      "message": "В конце строки не должно быть пустых символов",
+      "ignore": ["empty-lines"]
     }],
     "no-missing-end-of-source-newline": [true, {
       "message": "Файл должен содержать пустую строку"
-    }],
+    }]
   }
 }
