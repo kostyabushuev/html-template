@@ -6,7 +6,6 @@ const autoprefixer = require('gulp-autoprefixer')
 const ftp = require('vinyl-ftp')
 const notify = require('gulp-notify')
 const rsync = require('gulp-rsync')
-const rigger = require('gulp-rigger')
 const babel = require('gulp-babel')
 const plumber = require('gulp-plumber')
 const del = require('del')
@@ -14,6 +13,7 @@ const imagemin = require('gulp-imagemin')
 const cache = require('gulp-cache')
 const htmlhint = require('gulp-htmlhint')
 const gulpStylelint = require('gulp-stylelint')
+const fileinclude = require('gulp-file-include')
 
 gulp.task('browser-sync', function () {
   browserSync({
@@ -28,7 +28,14 @@ gulp.task('html', function () {
   return gulp.src('app/html/*.html')
     .pipe(htmlhint('.htmlhintrc'))
     .pipe(htmlhint.reporter())
-    .pipe(rigger())
+    .pipe(fileinclude({
+      prefix: '@@',
+      basepath: '@file'
+    }))
+    .on('error', notify.onError({
+      title: 'Error including html-file',
+      message: '<%= error.message %>',
+    }))
     .pipe(gulp.dest('app/'))
     .pipe(browserSync.reload({stream: true}))
 })
