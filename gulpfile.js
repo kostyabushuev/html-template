@@ -6,22 +6,43 @@ const autoprefixer = require('gulp-autoprefixer')
 const ftp = require('vinyl-ftp')
 const notify = require('gulp-notify')
 const rsync = require('gulp-rsync')
+const eslint = require('gulp-eslint')
 const babel = require('gulp-babel')
 const plumber = require('gulp-plumber')
 const del = require('del')
 const imagemin = require('gulp-imagemin')
-const cache = require('gulp-cache')
+const cached = require('gulp-cached')
 const htmlhint = require('gulp-htmlhint')
 const gulpStylelint = require('gulp-stylelint')
 const fileinclude = require('gulp-file-include')
+const uglify = require('gulp-uglify')
+const sourcemaps = require('gulp-sourcemaps')
+const args = require('yargs').argv
+const pc = require('./projectconfig.json')
+const tap = require('gulp-tap')
+const ftpConnection = getFtpConnection()
+
+const bsPreset = (function () {
+  if (args.proxy) {
+    return {
+      proxy: {
+        target: pc.proxy.target
+      },
+      open: !!args.open
+    }
+  } else {
+    return {
+      server: {
+        baseDir: 'app'
+      },
+      open: !!args.open,
+      notify: false,
+    }
+  }
+})()
 
 gulp.task('browser-sync', function () {
-  browserSync({
-    server: {
-      baseDir: 'app',
-    },
-    notify: false,
-  })
+  browserSync(bsPreset)
 })
 
 gulp.task('html', function () {
@@ -30,6 +51,7 @@ gulp.task('html', function () {
     .pipe(htmlhint('.htmlhintrc'))
     .pipe(htmlhint.failOnError())
     .on('error', function (error) {
+    /* eslint-disable-next-line */
       console.log(error.message)
     })
     .pipe(fileinclude({
@@ -44,32 +66,90 @@ gulp.task('html', function () {
     .pipe(browserSync.reload({stream: true}))
 })
 
-gulp.task('scss', function () {
+gulp.task('stylelint', function () {
+  /* off stylelint */
+  if (args.nostylelint) {
+    return false
+  }
+
   return gulp.src('app/scss/**/*.scss')
-  .pipe(gulpStylelint({
-    failAfterError: false,
-    reporters: [
-      {formatter: 'string', console: true},
-    ],
-  }))
-  .pipe(scss({outputStyle: 'compressed'}))
-  .on('error', notify.onError({
-    title: 'Error compilation scss-file',
-    message: '<%= error.message %>',
-  }))
-  .pipe(autoprefixer(['last 15 versions']))
-  .pipe(gulp.dest('app/css/compiled'))
-  .pipe(browserSync.reload({stream: true}))
+    .pipe(cached())
+    .pipe(gulpStylelint({
+      failAfterError: false,
+      reporters: [
+        {formatter: 'string', console: true},
+      ],
+    }))
 })
 
-gulp.task('js', function () {
+gulp.task('scss', ['stylelint'], function () {
+  let src = gulp.src('app/scss/**/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(scss({outputStyle: 'compressed'}).on('error', scss.logError))
+    .pipe(cached())
+    .pipe(autoprefixer(['last 15 version']))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('app/css/compiled'))
+
+  if (args.remote) {
+    src.pipe(tap((file) => {
+      sendToRemote(file.path, ftpConnection)
+    }))
+
+    return src
+      .pipe(browserSync.reload({stream: true}))
+  } else {
+    return src
+      .pipe(browserSync.reload({stream: true}))
+  }
+})
+
+gulp.task('eslint', function () {
+  if (args.noeslint) {
+    return false
+  }
+
   return gulp.src(['app/js/custom/**/*.js'])
-  .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
-  .pipe(babel({
-    presets: ['@babel/preset-env']
-  }))
-  .pipe(gulp.dest('app/js/compiled'))
-  .pipe(browserSync.reload({stream: true}))
+    .pipe(eslint())
+    .pipe(eslint.results((results) => {
+      /* eslint-disable-next-line */
+      console.log(`Total Results: ${results.length}`)
+      /* eslint-disable-next-line */
+      console.log(`Total Warnings: ${results.warningCount}`)
+      /* eslint-disable-next-line */
+      console.log(`Total Errors: ${results.errorCount}`)
+    }))
+})
+
+gulp.task('js', ['eslint'], function (event, val) {
+  let src = gulp.src(['app/js/custom/**/*.js'])
+    .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
+
+  if (!args.nobabel) {
+    src = babelTranspilation(src)
+  }
+
+  if (args.minifyjs) {
+    src = src.pipe(uglify())
+  }
+
+  if (args.remote) {
+    let blobArr = []
+
+    src.pipe(tap((file) => {
+      blobArr.push(file.path)
+
+      sendToRemote(blobArr, ftpConnection)
+
+      return src
+        .pipe(gulp.dest('app/js/compiled'))
+        .pipe(browserSync.reload({stream: true}))
+    }))
+  }
+
+  return src
+    .pipe(gulp.dest('app/js/compiled'))
+    .pipe(browserSync.reload({stream: true}))
 })
 
 gulp.task('watch', ['html', 'scss', 'js', 'browser-sync'], function () {
@@ -81,68 +161,132 @@ gulp.task('watch', ['html', 'scss', 'js', 'browser-sync'], function () {
 
 gulp.task('imagemin', function () {
   return gulp.src('app/img/**/*')
-    .pipe(cache(imagemin()))
-    .pipe(gulp.dest('dist/img'))
+    .pipe(cached(imagemin()))
+    .pipe(gulp.dest('build/img'))
 })
 
-gulp.task('removedist', function () {
-  return del.sync('dist')
+gulp.task('removebuild', function () {
+  return del.sync('build')
 })
 
-gulp.task('build', ['imagemin', 'html', 'removedist', 'scss', 'js'], function () {
+gulp.task('build', ['removebuild', 'imagemin', 'html', 'scss', 'js'], function () {
   /* eslint-disable-next-line */
   let buildFiles = gulp.src([
     'app/*.html',
     'app/.htaccess',
     'app/*.php',
-    ]).pipe(gulp.dest('dist'))
+    ]).pipe(gulp.dest('build'))
 
   /* eslint-disable-next-line */
   let buildCss = gulp.src([
     'app/css/**/*',
-    ]).pipe(gulp.dest('dist/css'))
+    ]).pipe(gulp.dest('build/css'))
 
   /* eslint-disable-next-line */
   let buildImg = gulp.src([
     'app/img/**/*',
-    ]).pipe(gulp.dest('dist/img'))
+    ])
+    .pipe(gulp.dest('build/img'))
 
   /* eslint-disable-next-line */
   let buildJs = gulp.src([
+    '!app/js/custom/**/*',
     'app/js/**/*',
-    ]).pipe(gulp.dest('dist/js'))
+    ]).pipe(gulp.dest('build/js'))
 
-  /* eslint-disable-next-line */
+  // /* eslint-disable-next-line */
   let buildFonts = gulp.src([
     'app/fonts/**/*',
-    ]).pipe(gulp.dest('dist/fonts'))
+    ]).pipe(gulp.dest('build/fonts'))
 })
 
-gulp.task('rsync', function () {
-  return gulp.src('dist/**')
-  .pipe(rsync({
-    root: 'dist/',
-    hostname: 'username@yousite.com',
-    destination: 'yousite/public_html/',
-    archive: true,
-    silent: false,
-    compress: true
-  }))
+gulp.task('rsyncdeploy', function () {
+  return gulp.src('build/**')
+    .pipe(rsync({
+      root: 'build/',
+      hostname: 'username@yousite.com',
+      destination: 'yousite/public_html/',
+      archive: true,
+      silent: false,
+      compress: true
+    }))
 })
 
-gulp.task('deploy', function () {
-  let conn = ftp.create({
-    host: 'hostname.com',
-    user: 'username',
-    password: 'userpassword',
-    parallel: 0,
-    log: gutil.log
-  })
+gulp.task('rsyncdeploy', function () {
+  const filesArr = args.files.split(',')
+  const preset = pc.rsync.presets[args.preset]
+
+  let pathArr = []
+
+  for (let i = 0; i < filesArr.length; i++) {
+    switch (filesArr[i]) {
+      case 'css':
+        pathArr.push('build/css/**/*.css')
+
+        break
+      case 'js':
+        pathArr.push('build/js/compiled/**/*.js', 'build/js/libs/*.js')
+
+        break
+      case 'img':
+        pathArr.push('build/img/**/*')
+
+        break
+      case 'fonts':
+        pathArr.push('build/fonts/**/*')
+
+        break
+      case 'all':
+        filesArr.length = 0
+        pathArr = 'build/**/*'
+
+        break
+    }
+  }
+
+  return gulp.src(pathArr)
+    .pipe(rsync({
+      root: 'build/',
+      hostname: preset.hostname,
+      destination: preset.destination,
+      archive: true,
+      silent: false,
+      compress: true,
+    }))
+})
+
+gulp.task('ftpdeploy', ['build'], function () {
+  let conn = getFtpConnection()
 
   let globs = [
     'dist/**',
     'dist/.htaccess',
   ]
-  return gulp.src(globs, {buffer: false})
-  .pipe(conn.dest('/path/to/folder/on/server'))
+
+  sendToRemote(globs, conn)
 })
+
+function getFtpConnection () {
+  return ftp.create({
+    host: pc.ftp.host,
+    port: pc.ftp.port,
+    user: pc.ftp.user,
+    password: pc.ftp.password,
+    parallel: 5,
+    log: gutil.log,
+  })
+}
+
+function sendToRemote (globs, connection) {
+  return gulp
+    .src(globs, {base: './app', buffer: false})
+    .pipe(connection.newer(pc.ftp.path))
+    .pipe(connection.dest(pc.ftp.path))
+}
+
+function babelTranspilation (src) {
+  return src
+    .pipe(babel({
+      presets: ['@babel/preset-env']
+    }))
+}

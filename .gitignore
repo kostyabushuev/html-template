@@ -1,9 +1,10 @@
 /node_modules/
-/dist/
+/build/
 /.git/
 /app/css/compiled
 /app/js/compiled
 /package-lock.json
+/projectconfig.json
 
 /app/*.html
 !app/index.html

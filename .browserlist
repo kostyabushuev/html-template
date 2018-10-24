@@ -1,0 +1,8 @@
+> 0.2%,
+ie >= 11
+chrome >= 40
+ios >= 10
+safari >= 10
+ff >= 40
+Edge >= 12
+opera >= 40

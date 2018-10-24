@@ -14,6 +14,17 @@ main {
 body {
   margin: 0;
   font-family: $default-font;
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1.4;
   overflow-x: hidden;
+  color: #000;
+}
+
+button {
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  appearance: none;
+  border-radius: 0;
 }
